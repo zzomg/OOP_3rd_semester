@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "txt_parser.h"
 #include <iostream>
 #include <algorithm> //std::sort
 #include <fstream>
@@ -7,30 +8,6 @@
 #include <vector>
 #include <list>
 #include <map>
-
-typedef std::pair<std::string, long int> pair;
-
-class Parser
-{
-public:
-	Parser() { totalWordsCount_ = 0; };
-	~Parser() {};
-
-	std::list<std::string> load_txt_();
-	void parse_txt_(std::list<std::string> lines_);
-	void parse_line_(std::string& line);
-	std::vector<pair> sort_(std::map<std::string, long int> map);
-	void push_csv_();
-
-public:
-	std::ifstream inputFile;
-	std::ofstream outputFile;
-
-private:
-	std::map<std::string, long int> words_;
-	std::list<std::string> lines_;
-	long int totalWordsCount_;
-};
 
 std::list<std::string> Parser::load_txt_()
 {
@@ -56,7 +33,7 @@ void Parser::parse_line_(std::string& line)
 	for (char& c : line) {
 		if (std::isalnum(static_cast<unsigned char>(c))) {
 			buf.push_back(c);
-		} 
+		}
 		else {
 			std::map<std::string, long int>::iterator it = words_.find(buf);
 			if (!buf.empty()) {
@@ -88,14 +65,14 @@ std::vector<pair> Parser::sort_(std::map<std::string, long int> map)
 		if (l.second != r.second)
 			return l.second > r.second;
 		return l.first > r.first;
-	});
+		});
 
 	return vec;
 }
 
 void Parser::push_csv_()
 {
-	for (auto const &pair : Parser::sort_(words_))
+	for (auto const& pair : Parser::sort_(words_))
 	{
 		outputFile << pair.first << "," << pair.second << ","
 			<< ((float)pair.second / (float)totalWordsCount_) * 100 << std::endl;
