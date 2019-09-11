@@ -108,8 +108,6 @@ int main(int argc, char **argv)
 	std::setlocale(LC_ALL, "");
 
 	Parser p1;
-	//p1.inputFile.open(argv[1]);
-	//p1.outputFile.open(argv[2]);
 
 	p1.inputFile.open("input.txt");
 	p1.outputFile.open("output_rus.txt");
