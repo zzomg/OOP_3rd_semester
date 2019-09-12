@@ -11,7 +11,7 @@
 
 std::list<std::string> Parser::load_txt_()
 {
-	for (std::string line; std::getline(inputFile, line); )
+	for (std::string line; std::getline(inputFile, line, '.'); )
 	{
 		lines_.push_back(line);
 	}
