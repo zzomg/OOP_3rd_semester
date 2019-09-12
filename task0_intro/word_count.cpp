@@ -31,7 +31,7 @@ void Parser::parse_line_(std::string& line)
 	std::string buf;
 
 	for (char& c : line) {
-		if (std::isalnum(static_cast<unsigned char>(c))) {
+		if (std::isalnum(c)) {
 			buf.push_back(c);
 		}
 		else {
