@@ -12,20 +12,32 @@ typedef std::pair<std::string, long int> pair;
 class Parser
 {
 public:
-	Parser() { totalWordsCount_ = 0; };
-	~Parser() {};
+	Parser(std::string inputFilePath, std::string outputFilePath);
+	~Parser();
 
-	std::list<std::string> load_txt_();
-	void parse_txt_(std::list<std::string> lines_);
+	void parse_txt_();
 	void parse_line_(std::string& line);
-	std::vector<pair> sort_(std::map<std::string, long int> map);
+	std::vector<pair> sort_(std::map<std::string, long int>& map);
 	void push_csv_();
 
-	std::ifstream inputFile;
-	std::ofstream outputFile;
+	std::ifstream inputFile_;
+	std::ofstream outputFile_;
 
 private:
 	std::map<std::string, long int> words_;
-	std::list<std::string> lines_;
 	long int totalWordsCount_;
 };
+
+Parser::Parser(std::string inputFilePath, std::string outputFilePath)
+{
+	totalWordsCount_ = 0;
+	inputFile_.open(inputFilePath);
+	outputFile_.open(outputFilePath);
+};
+
+Parser::~Parser()
+{
+	inputFile_.close();
+	outputFile_.close();
+};
+
