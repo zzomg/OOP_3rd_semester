@@ -9,18 +9,9 @@
 #include <list>
 #include <map>
 
-std::list<std::string> Parser::load_txt_()
+void Parser::parse_txt_()
 {
-	for (std::string line; std::getline(inputFile, line, '.'); )
-	{
-		lines_.push_back(line);
-	}
-	return lines_;
-}
-
-void Parser::parse_txt_(std::list<std::string> lines_)
-{
-	for (std::string& line : lines_)
+	for (std::string line; std::getline(inputFile_, line, '.'); )
 	{
 		parse_line_(line);
 	}
@@ -35,18 +26,10 @@ void Parser::parse_line_(std::string& line)
 			buf.push_back(c);
 		}
 		else {
-			std::map<std::string, long int>::iterator it = words_.find(buf);
-			if (!buf.empty()) {
-				if (it != words_.end()) {
-					it->second++;
-					totalWordsCount_++;
-					buf.clear();
-				}
-				else {
-					words_[buf] = 1;
-					totalWordsCount_++;
-					buf.clear();
-				}
+			if (!buf.empty()) { //на случай, если два разделителя идут подряд
+				words_[buf]++;
+				totalWordsCount_++;
+				buf.clear();
 			}
 			else {
 				continue;
@@ -55,7 +38,7 @@ void Parser::parse_line_(std::string& line)
 	}
 }
 
-std::vector<pair> Parser::sort_(std::map<std::string, long int> map)
+std::vector<pair> Parser::sort_(std::map<std::string, long int>& map)
 {
 	std::vector<pair> vec;
 
@@ -72,31 +55,29 @@ std::vector<pair> Parser::sort_(std::map<std::string, long int> map)
 
 void Parser::push_csv_()
 {
-	for (auto const& pair : Parser::sort_(words_))
+	for (auto& pair : Parser::sort_(words_))
 	{
-		outputFile << pair.first << "," << pair.second << ","
+		outputFile_ << pair.first << "," << pair.second << ","
 			<< ((float)pair.second / (float)totalWordsCount_) * 100 << std::endl;
 	}
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-	Parser p1;
-	p1.inputFile.open(argv[1]);
-	p1.outputFile.open(argv[2]);
+	Parser p1(argv[1], argv[2]);
 
-	if (!p1.inputFile)  
+	if (!p1.inputFile_)
 	{
 		std::cout << "File 1 opening failed\n";
 		return EXIT_FAILURE;
 	}
-	if (!p1.outputFile)
+	if (!p1.outputFile_)
 	{
 		std::cout << "File 2 opening failed\n";
 		return EXIT_FAILURE;
 	}
 
-	p1.parse_txt_(p1.load_txt_());
+	p1.parse_txt_();
 	p1.push_csv_();
 
 	return 0;
