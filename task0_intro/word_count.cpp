@@ -55,8 +55,6 @@ std::vector<pair> sort_(const std::map<std::string, long int>& map)
 {
 	std::vector<pair> vec(map.begin(), map.end());
 
-	//std::copy(map.begin(), map.end(), std::back_inserter<std::vector<pair>>(vec));
-
 	std::sort(vec.begin(), vec.end(), [](const pair& l, const pair& r) {
 		if (l.second != r.second)
 			return l.second > r.second;
