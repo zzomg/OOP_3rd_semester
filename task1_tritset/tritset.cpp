@@ -1,3 +1,238 @@
+#include "tritset.h"
+#include <iostream>
+#include <map>
+
+Trit operator | (Trit left, Trit right)
+{
+	if (left == Trit::True || right == Trit::True) {
+		return Trit::True;
+	}
+	else if (left == Trit::False && right == Trit::False) {
+		return Trit::False;
+	}
+	else return Trit::Unknown;
+}
+
+Trit operator & (Trit left, Trit right)
+{
+	if (left == Trit::False || right == Trit::False) {
+		return Trit::False;
+	}
+	else if (left == Trit::True && right == Trit::True) {
+		return Trit::True;
+	}
+	else return Trit::Unknown;
+}
+
+Trit operator ~ (Trit value)
+{
+	if (value == Trit::True) {
+		return Trit::False;
+	}
+	else if (value == Trit::False) {
+		return Trit::True;
+	}
+	else return Trit::Unknown;
+}
+
+TritSet operator~(const TritSet& obj)
+{
+	size_t res_size = obj.size_;
+	TritSet res(res_size);
+
+	//?????????
+}
+
+TritSet operator&(const TritSet& left, const TritSet& right)
+{
+	size_t res_size = (left.size_ > right.size_) ? left.size_ : right.size_;
+	TritSet res(res_size);
+	
+	return res;
+}
+
+TritSet operator|(const TritSet& left, const TritSet& right)
+{
+	size_t res_size = (left.size_ > right.size_) ? left.size_ : right.size_;
+	TritSet res(res_size);
+	
+	return res;
+}
+
+/*std::map< int, size_t > TritSet::cardinality() //кол-во тритов всех видов
+{
+	std::map< int, size_t > values;
+	size_t len = length();
+	const TritSet& trit_const = const_cast<const TritSet&>(*this);
+	for (size_t i = 0; i < len; ++i) {
+		++values[trit_const[i]];
+	}
+	return values;
+}*/
+
+/*size_t TritSet::cardinality(int value) //кол-во тритов типа value 
+{
+	size_t count = 0;
+	size_t len = length();
+	const TritSet& trit_const = const_cast<const TritSet&>(*this);
+	for (size_t i = 0; i < len; ++i) {
+		if (trit_const[i] == value) {
+			++count;
+		}
+	}
+	return count;
+}*/
+
+void TritSet::trim(size_t idx) //"забыть" триты после idx
+{
+	size_t len = length();
+	for (size_t i = idx; i < len; ++i) {
+		(*this)[i] = Trit::Unknown;
+	}
+}
+
+size_t TritSet::length() //размер в тритах до послед. устан. трита
+{
+	size_t last_set_idx = 0;
+	int met_set = 0;
+	const TritSet& trit_const = const_cast<const TritSet&>(*this);
+	for (size_t i = 0; i < size_; ++i) {
+		if (trit_const[i] != Trit::Unknown) {
+			last_set_idx = i;
+		}
+	}
+	return last_set_idx + 1;
+}
+
+void TritSet::shrink(void) //сжать тритсет до размера послед. устан. трита
+{
+	size_t len = tritsToBytes(length());
+	uint* shrunk_storage = new uint[len];
+	for (size_t i = 0; i < len; ++i) {
+		shrunk_storage[i] = storage_[i];
+	}
+	delete[] storage_;
+	storage_ = shrunk_storage;
+	capacity_ = len;
+	size_ = tritsInByte();
+}
+
+TritSet::reference& TritSet::reference::operator=(const reference& other)
+{
+	*this = (Trit)other;
+	return *this;
+}
+
+TritSet::reference& TritSet::reference::operator=(Trit value)
+{
+	*this = value;
+	return *this;
+}
+
+TritSet::reference TritSet::operator[](size_t idx)
+{
+	return reference(*this, idx);
+}
+
+Trit TritSet::operator[](size_t idx) const
+{
+	/*Trit return_value = Trit::Unknown;
+	if (idx < size_) {
+		return_value = mask & word;
+	}
+	return return_value;*/
+	//return (Trit)(reference(this, idx));
+}
+
+void TritSet::reallocMemory(TritSet& tritset, size_t idx)
+{
+	size_t new_capacity_ = tritsToBytes(idx) + 1;
+	uint* tmp = new uint[new_capacity_];
+	for (size_t i = 0; i < tritset.capacity_; ++i) {
+		tmp[i] = tritset.storage_[i];
+	}
+	for (size_t i = tritset.capacity_; i < new_capacity_; ++i) {
+		tmp[i] = 0;
+	}
+	tritset.capacity_ = new_capacity_;
+	tritset.size_ = idx + 1;
+	delete[] tritset.storage_;
+	tritset.storage_ = tmp;
+}
+
+TritSet::reference::operator Trit() const
+{
+	uint value = 0;
+
+	size_t bit_pos = 2 * (index_ % (sizeof(uint) * 8 / 2));
+	uint word_ = tritset_.storage_[tritsToBytes(index_)];
+	size_t shift = sizeof(uint) * 8 - 2 - bit_pos;
+
+	uint mask = 0x03; //0000...00011
+
+	value = (word_ & (mask << shift)) >> shift;
+
+	return (Trit)value;
+}
+
+TritSet::reference::reference(TritSet& tritset, size_t idx): 
+	tritset_(tritset), index_(idx)
+{}
+
+TritSet::TritSet(const TritSet& other) //Конструктор копирования
+{
+	size_ = other.size_;
+	capacity_ = other.capacity_;
+	storage_ = new uint[capacity_];
+	for (size_t i = 0; i < capacity_; ++i) {
+		storage_[i] = other.storage_[i];
+	}
+}
+
+TritSet::TritSet(size_t size) : size_(size) //Конструктор по умолчанию
+{
+	if (size == 0) {
+		capacity_ = 0;
+		storage_ = nullptr;
+	}
+	else {
+		capacity_ = tritsToBytes(size) + 1;
+		storage_ = new uint[capacity_];
+	}
+	for (size_t i = 0; i < capacity_; ++i) { storage_[i] = 0; }
+}
+
+TritSet& TritSet::operator=(TritSet& other) //оператор присваивания состояния одного объекта другому
+{
+	if (this != &other) {
+		delete[] storage_;
+		size_ = other.size_;
+		capacity_ = other.capacity_;
+		storage_ = new uint[capacity_];
+		for (size_t i = 0; i < capacity_; ++i) {
+			storage_[i] = other.storage_[i];
+		}
+	}
+	return *this;
+}
+
+TritSet::TritSet(TritSet&& other) //Move-конструктор
+{
+	size_ = other.size_;
+	capacity_ = other.capacity_;
+	delete[] storage_;
+	storage_ = other.storage_;
+	other.storage_ = nullptr;
+	other.capacity_ = 0;
+	other.size_ = 0;
+}
+
+TritSet::~TritSet() //деструктор
+{
+	delete[] storage_;
+}
+/*
+//MY OLD VERSION
 #include <iostream>
 #include <map>
 #include "task1.h"
@@ -256,8 +491,9 @@ TritSet::~TritSet() //деструктор
 {
 	delete[] storage_;
 }
-
+*/
 /*
+//SEMINAR VERSION
 #include "stdafx.h"
 #include "targetver.h"
 #include "task1.h"
