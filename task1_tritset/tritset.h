@@ -12,6 +12,7 @@ Trit operator ~ (Trit value);
 
 class TritSet
 {
+public:
 	uint* storage_; //внутреннее хранилище
 	size_t size_; //количество ТРИТОВ в массиве
 	size_t capacity_; //количество UINT'ОВ в массиве
@@ -49,17 +50,21 @@ public:
 	friend TritSet operator&(const TritSet& left, const TritSet& right);
 	friend TritSet operator|(const TritSet& left, const TritSet& right);
 	friend TritSet operator~(const TritSet& obj);
+	friend bool operator==(const TritSet& left, const TritSet& right);
+	friend bool operator!=(const TritSet& left, const TritSet& right);
 
 	//member functions
 	void shrink();
 	size_t length();
 	void trim(size_t idx);
-	size_t cardinality(int value);
+	size_t cardinality(Trit value);
 	size_t get_capacity() { return capacity_; }
 	std::map< int, size_t > cardinality();
 
 	//utilities
-	static void reallocMemory(TritSet& tritset, size_t idx);
+	void reallocMemory(size_t idx);
+	void setTrit(Trit value, size_t idx);
+	Trit getTrit(size_t idx) const;
 	static size_t tritsToBytes(size_t trit_n) {
 		return (trit_n * 2 / 8 / sizeof(uint));
 	}
@@ -67,6 +72,10 @@ public:
 		return (sizeof(uint) * 8 / 2);
 	}
 };
+
+
+
+
 
 /*
 //MY OLD VERSION
