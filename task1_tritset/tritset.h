@@ -56,7 +56,6 @@ public:
 	size_t length();
 	void trim(size_t idx);
 	size_t cardinality(Trit value);
-	//size_t get_capacity() { return capacity_; }
 	size_t get_size() { return size_; }
 	std::map< Trit, size_t > cardinality();
 
