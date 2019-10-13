@@ -136,7 +136,7 @@ void TritSet::shrink()
 }
 
 // Returns size in trits up to the last set bit
-size_t TritSet::length() //размер в тритах до послед. устан. трита
+size_t TritSet::length() 
 {
 	size_t last_set_idx = 0;
 	int met_set = 0;
