@@ -146,7 +146,7 @@ void TritSet::shrink()
 }
 
 // Returns size in trits up to the last set bit
-size_t TritSet::length() 
+size_t TritSet::length() const
 {
 	size_t last_set_idx = 0;
 	int met_set = 0;
@@ -170,7 +170,7 @@ void TritSet::trim(size_t idx)
 }
 
 // Count number of trits of value
-size_t TritSet::cardinality(Trit value) 
+size_t TritSet::cardinality(Trit value) const
 {
 	size_t count = 0;
 
@@ -183,7 +183,7 @@ size_t TritSet::cardinality(Trit value)
 }
 
 // Count number of trits of all values
-std::map< Trit, size_t > TritSet::cardinality() 
+std::map< Trit, size_t > TritSet::cardinality() const
 {
 	std::map< Trit, size_t > values;
 
