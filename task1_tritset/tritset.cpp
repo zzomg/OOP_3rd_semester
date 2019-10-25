@@ -2,6 +2,16 @@
 #include <iostream>
 #include <map>
 
+namespace {
+	size_t tritsToUints(size_t trit_n) {
+		return (trit_n * 2 / 8 / sizeof(uint));
+	}
+
+	size_t tritsInByte() {
+		return (sizeof(uint)* 4);
+	}
+}
+
 // Proxy-class "reference" constructor
 TritSet::reference::reference(TritSet& tritset, size_t idx) :
 	tritset_(tritset), index_(idx)
