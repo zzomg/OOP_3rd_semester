@@ -6,7 +6,8 @@ class TritSet
 {
 	uint* storage_; 
 	size_t size_; 
-
+	
+	void reallocMemory(size_t idx);
 public:
 
 	/*Member types*/
@@ -46,16 +47,15 @@ public:
 
 	//Capacity
 	void shrink();
-	size_t length();
+	size_t length() const;
 	void trim(size_t idx);
-	size_t get_size() { return size_; }
+	size_t get_size() const { return size_; }
 
 	//Values cardinality
-	size_t cardinality(Trit value);
-	std::map< Trit, size_t > cardinality();
+	size_t cardinality(Trit value) const;
+	std::map< Trit, size_t > cardinality() const;
 
 	//Modifiers
-	void reallocMemory(size_t idx);
 	void setTrit(Trit value, size_t idx);
 	Trit getTrit(size_t idx) const;
 
@@ -66,12 +66,11 @@ public:
 
 	friend bool operator==(const TritSet& left, const TritSet& right); 
 	friend bool operator!=(const TritSet& left, const TritSet& right);
-
-	//Utilities
-	static size_t tritsToUints(size_t trit_n) {
-		return (trit_n * 2 / 8 / sizeof(uint));
-	}
-	static size_t tritsInByte() {
-		return (sizeof(uint) * 4);
-	}
 };
+
+TritSet operator&(const TritSet& left, const TritSet& right);
+TritSet operator|(const TritSet& left, const TritSet& right);
+TritSet operator~(const TritSet& obj);
+
+bool operator==(const TritSet& left, const TritSet& right);
+bool operator!=(const TritSet& left, const TritSet& right);
