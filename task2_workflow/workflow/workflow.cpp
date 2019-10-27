@@ -24,6 +24,12 @@ void Workflow::run(const std::string& workflowFilePath)
 			parser.instructions_[*it].first != "writefile") {
 			throw std::exception("Workflow must end with \"writefile\"\n");
 		}
+		if (it != parser.instructions_order_.begin() &&
+			it != parser.instructions_order_.end() - 1 &&
+			(parser.instructions_[*it].first == "writefile" ||
+				parser.instructions_[*it].first != "readfile")) {
+			throw std::exception("\"Readfile\" and \"writefile\" can not be executed more than once\n");
+		}
 		Instruction* instr = factory.Create(parser.instructions_[*it]);
 		instr->execute(input);
 		delete instr;
