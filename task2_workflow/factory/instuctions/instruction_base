@@ -1,0 +1,14 @@
+#pragma once
+#include <vector>
+#include <string>
+#include <fstream>
+
+typedef std::pair< std::string, std::vector<std::string> > pair;
+
+class Instruction
+{
+public:
+
+	virtual ~Instruction() {}
+	virtual void execute(std::vector<std::string>& input) = 0;
+};
