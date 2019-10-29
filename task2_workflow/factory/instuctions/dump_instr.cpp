@@ -3,10 +3,11 @@
 DumpInstr::DumpInstr(pair instr)
 {
 	if (instr.second.size() != 1) { 
-		throw std::exception("REPLACE must receive 2 arguments\n");
+		throw std::exception("DUMP must receive 1 argument\n");
 	}
 	filename_ = instr.second[0];
 }
+
 void DumpInstr::execute(std::vector<std::string>& input)
 {
 	std::ofstream dumpFile(filename_);
