@@ -23,5 +23,6 @@ public:
 		return factory;
 	}
 
-	Instruction* Create(pair instr) const;
+	Instruction* Create(const std::string &name, const std::vector<std::string> &args) const;
+	void RegisterMaker(const std::string& key, InstructionMakerBase* maker);
 };
