@@ -1,4 +1,7 @@
 #include "sort_instr.h"
+#include "instruction_maker.h"
+
+static InstructionMaker<SortInstr> sortInstrMaker("sort");
 
 SortInstr::SortInstr(pair instr)
 {
