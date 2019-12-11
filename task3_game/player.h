@@ -7,7 +7,6 @@ protected:
 	int aliveShips;
 	Field field;
 	char type = 0;
-private:
 public:
 	virtual void GenerateField() = 0;
 	virtual Point MakeTurn(Field field) = 0;
