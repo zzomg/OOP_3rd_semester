@@ -4,7 +4,7 @@
 using namespace GUI;
 
 int main() {
-	vector<MenuElements*> dt0 = { new Label("Welcome in Sea Battle Game!\n"), new Button("Play!"), new Button("Controls"), new Button("About"), new Button("Quit") };
+	vector<MenuElements*> dt0 = { new Label("Welcome to the Seabattle Game!\n"), new Button("Play!"), new Button("Controls"), new Button("About"), new Button("Quit") };
 	vector<MenuElements*> dt1 = { new Label("Choose Player #1\n"), new Label("Player #1: "), new Button("Gamer"), new Button("Easy Bot"), new Button("Hard Bot"), new Button("\nBack") };
 	vector<MenuElements*> dt1_1 = { new Label("Choose Player #2\n"), new Label("Player #2: "), new Button("Gamer"), new Button("Easy Bot"), new Button("Hard Bot"), new Button("\nBack") };
 	vector<MenuElements*> dt2 = { new Label("Controls\n"), new Label("Use arrow keys to move ships and 'space' to rotate. \nPress 'enter' to set the ship and to attack.\n"), new Button("Back") };
