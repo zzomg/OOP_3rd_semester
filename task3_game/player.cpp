@@ -29,7 +29,7 @@ void Gamer::GenerateField() {
 				}
 			}
 		}
-		while (!(key == 13 && allowed)) {
+		while (!(key == 13 && allowed)) { //13 = enter
 			system("cls");
 			field.Draw();
 			allowed = true;
@@ -44,7 +44,7 @@ void Gamer::GenerateField() {
 				i = -1;
 				break;
 			}
-			if (key == 75 && biasX > 0) {
+			if (key == 75 && biasX > 0) { //left key
 				biasX--;
 				if (vert) {
 					for (int j = 0; j < sizes[i]; j++) {
@@ -55,7 +55,7 @@ void Gamer::GenerateField() {
 					if (field.field[biasY][biasX + sizes[i]] != A && field.field[biasY][biasX + sizes[i]] != UA) field.field[biasY][biasX + sizes[i]] = E;
 				}
 			}
-			if (key == 77 && biasX < 10 - ((vert == true) ? 1 : sizes[i])) {
+			if (key == 77 && biasX < 10 - ((vert == true) ? 1 : sizes[i])) { //right key
 				biasX++;
 				if (vert) {
 					for (int j = 0; j < sizes[i]; j++) {
@@ -66,7 +66,7 @@ void Gamer::GenerateField() {
 					if (field.field[biasY][biasX - 1] != A && field.field[biasY][biasX - 1] != UA) field.field[biasY][biasX - 1] = E;
 				}
 			}
-			if (key == 72 && biasY > 0) {
+			if (key == 72 && biasY > 0) { //up key
 				biasY--;
 				if (!vert) {
 					for (int j = 0; j < sizes[i]; j++) {
@@ -77,7 +77,7 @@ void Gamer::GenerateField() {
 					if (field.field[biasY + sizes[i]][biasX] != A && field.field[biasY + sizes[i]][biasX] != UA) field.field[biasY + sizes[i]][biasX] = E;
 				}
 			}
-			if (key == 80 && biasY < 10 - ((!vert) ? 1 : sizes[i])) {
+			if (key == 80 && biasY < 10 - ((!vert) ? 1 : sizes[i])) { //down key
 				biasY++;
 				if (!vert) {
 					for (int j = 0; j < sizes[i]; j++) {
@@ -88,7 +88,7 @@ void Gamer::GenerateField() {
 					if (field.field[biasY - 1][biasX] != A && field.field[biasY - 1][biasX] != UA) field.field[biasY - 1][biasX] = E;
 				}
 			}
-			if (key == 32) {
+			if (key == 32) { //space
 				if (!vert) {
 					int oldbiasY = biasY;
 					if (biasY + sizes[i] > 10) biasY = 10 - sizes[i];
