@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include <Windows.h>
 #include <conio.h>
 #include <iostream>
@@ -38,8 +39,12 @@ public:
 class Field {
 private:
 	CellType field[10][10];
+	int aliveShips;
+
 public:
-	friend class Player;
+	void Free();
+
+	friend class Game;
 	friend class Gamer;
 	friend class RandomBot;
 	friend class OptimalBot;
@@ -47,5 +52,12 @@ public:
 	Field Transform();
 	bool KillCheck(Point p);
 	void MakeFrame(Point p);
-};
 
+	int &aliveShips() {
+		return aliveShips;
+	}
+
+	int aliveShips() const {
+		return aliveShips;
+	}
+};
