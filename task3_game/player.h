@@ -1,43 +1,45 @@
 #pragma once
+#include "stdafx.h"
 #include "field.h"
 
+enum class PlayerType {
+	Human,
+	Bot
+};
+
 class Player {
-protected:
-	void FreeField();
-	int aliveShips;
-	Field field;
-	char type = 0;
 public:
-	virtual void GenerateField() = 0;
+	virtual ~Player() = default;
+	virtual void GenerateField(Field &field) = 0;
 	virtual Point MakeTurn(Field field) = 0;
-	Player() = default;
-	Field Transform();
-	bool ProcessTurn(Point shoot);
-	int GetAlive() { return aliveShips; }
-	char Type() {
-		return type;
-	}
+	virtual PlayerType Type() = 0;
+
+
 };
 
 class Gamer : public Player {
 public:
-	void GenerateField() override;
+	void GenerateField(Field &field) override;
 	Gamer();
 	Point MakeTurn(Field field) override;
+	PlayerType Type() override { return PlayerType::Human; }
 };
 
 class RandomBot : public Player {
 public:
-	void GenerateField() override;
+	void GenerateField(Field &field) override;
 	RandomBot();
 	Point MakeTurn(Field field) override;
+	PlayerType Type() override { return PlayerType::Bot; }
+
 };
 
 class OptimalBot : public Player {
 private:
 	Point KillCheck(Field enemys);
 public:
-	void GenerateField() override;
+	void GenerateField(Field &field) override;
 	OptimalBot();
 	Point MakeTurn(Field field) override;
+	PlayerType Type() override { return PlayerType::Bot; }
 };
