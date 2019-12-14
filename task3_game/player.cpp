@@ -1,8 +1,9 @@
+#include "stdafx.h"
 #include "player.h"
 
-void Gamer::GenerateField() {
-	int sizes[10] = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
-	aliveShips = 20;
+void Gamer::GenerateField(Field &field) {
+	int sizes[10] = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
+	field.aliveShips() = 20;
 	for (int i = 0; i < 10; i++) {
 		bool vert = false;
 		bool allowed = true;
@@ -40,7 +41,7 @@ void Gamer::GenerateField() {
 			}
 			key = _getch();
 			if (key == 'r') {
-				FreeField();
+				field.Free();
 				i = -1;
 				break;
 			}
@@ -178,13 +179,9 @@ void Gamer::GenerateField() {
 }
 
 Gamer::Gamer() {
-	FreeField();
 }
 
 Point Gamer::MakeTurn(Field enemys) {
-	field.Draw();
-	cout << endl;
-	enemys.Draw();
 	char key = 0;
 	bool allowed = true;
 	int biasX = 0;
@@ -192,7 +189,7 @@ Point Gamer::MakeTurn(Field enemys) {
 	Field temp = enemys;
 
 	while (!(key == 13 && allowed)) {
-		key = _getch(); 
+		key = _getch();
 		temp = enemys;
 		if (key == 75 && biasX > 0) {
 			biasX--;
@@ -218,10 +215,6 @@ Point Gamer::MakeTurn(Field enemys) {
 			Point res(biasX, biasY);
 			return res;
 		}
-		system("cls");
-		field.Draw();
-		cout << endl;
-		temp.Draw();
 	}
 }
 
@@ -245,54 +238,22 @@ Point RandomBot::MakeTurn(Field enemys) {
 			allowed = false;
 		}
 	}
-	system("cls");
-	field.Draw();
-	cout << endl;
-	temp.Draw();
 	Sleep(500);
 	Point res(biasX, biasY);
 	return res;
 }
 
-Field Player::Transform() {
-	return field.Transform();
-}
-
 RandomBot::RandomBot() {
-	FreeField();
-	type = 1;
 }
 
-void Player::FreeField() {
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			field.field[i][j] = E;
-		}
-	}
-}
 
-bool Player::ProcessTurn(Point shoot) {
-	bool res = false;
-	if (field.field[shoot.y][shoot.x] == E) field.field[shoot.y][shoot.x] = S;
-	if (field.field[shoot.y][shoot.x] == AE) field.field[shoot.y][shoot.x] = S;
-	if (field.field[shoot.y][shoot.x] == UA) field.field[shoot.y][shoot.x] = S;
-	if (field.field[shoot.y][shoot.x] == A) {
-		field.field[shoot.y][shoot.x] = D;
-		aliveShips--;
-		if (aliveShips == 0) {
-			return 0;
-		}
-		field.KillCheck(shoot);
-		res = true;
-	}
-	return res;
-}
 
-void RandomBot::GenerateField() {
+
+void RandomBot::GenerateField(Field &field) {
 	int sizes[10] = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
 	srand(__rdtsc());
 	int i = 0;
-	aliveShips = 20;
+	field.aliveShips() = 20;
 	while (i < 10) {
 		bool vert = rand() % 2;
 		bool allowed = true;
@@ -411,15 +372,13 @@ void RandomBot::GenerateField() {
 }
 
 OptimalBot::OptimalBot() {
-	FreeField();
-	type = 1;
 }
 
-void OptimalBot::GenerateField() {
+void OptimalBot::GenerateField(Field &field) {
 	int sizes[10] = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
 	srand(__rdtsc());
 	int i = 0;
-	aliveShips = 20;
+	field.aliveShips() = 20;
 	while (i < 10) {
 		int wall = rand() % 4;
 		bool vert = wall % 2;
@@ -560,7 +519,7 @@ Point OptimalBot::MakeTurn(Field enemys) {
 	int offset = rand() % 2;
 	while (!allowed) {
 		temp = enemys;
-		if(res.x == -2) res = KillCheck(enemys);
+		if (res.x == -2) res = KillCheck(enemys);
 		biasY = rand() % 10;
 		biasX = rand() % 10;
 		if (res.x != -1 && temp.field[res.y][res.x] == U) {
@@ -576,10 +535,6 @@ Point OptimalBot::MakeTurn(Field enemys) {
 			allowed = false;
 		}
 	}
-	system("cls");
-	field.Draw();
-	cout << endl;
-	temp.Draw();
 	Sleep(500);
 	res = Point(biasX, biasY);
 	return res;
@@ -587,75 +542,75 @@ Point OptimalBot::MakeTurn(Field enemys) {
 
 Point OptimalBot::KillCheck(Field enemys) {
 	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 10; j++) {
-			if (enemys.field[i][j] == D && !enemys.KillCheck(Point(i, j))) {
-				Point p(j, i);
-				Point sh[4] = { Point(-1, -1), Point(-1, -1), Point(-1, -1), Point(-1, -1) };
-				bool dd[4];
-				int dir = -1;
-				int ran = 0;
-				int exec = -1;
-				//left
-				for (int k = 1; k < 4; k++) {
-					if (j - k >= 0 && enemys.field[i][j - k] != E && enemys.field[i][j - k] != S) {
-						dd[0] &= true;
-						if (enemys.field[i][j - k] == D) exec = 0;
-					}
-					else dd[0] = false;
-					if (j - k >= 0 && dd[0] && enemys.field[i][j - k] == D) dir = 0;
+	for (int j = 0; j < 10; j++) {
+		if (enemys.field[i][j] == D && !enemys.KillCheck(Point(i, j))) {
+			Point p(j, i);
+			Point sh[4] = { Point(-1, -1), Point(-1, -1), Point(-1, -1), Point(-1, -1) };
+			bool dd[4];
+			int dir = -1;
+			int ran = 0;
+			int exec = -1;
+			//left
+			for (int k = 1; k < 4; k++) {
+				if (j - k >= 0 && enemys.field[i][j - k] != E && enemys.field[i][j - k] != S) {
+					dd[0] &= true;
+					if (enemys.field[i][j - k] == D) exec = 0;
 				}
-				for (int k = 0; k < 4; k++) {
-					if (j - k >= 0 && enemys.field[i][j - k] == S) break;
-					if (j - k >= 0 && enemys.field[i][j - k] == U) { sh[0] = Point(j - k, i); break; }
+				else dd[0] = false;
+				if (j - k >= 0 && dd[0] && enemys.field[i][j - k] == D) dir = 0;
+			}
+			for (int k = 0; k < 4; k++) {
+				if (j - k >= 0 && enemys.field[i][j - k] == S) break;
+				if (j - k >= 0 && enemys.field[i][j - k] == U) { sh[0] = Point(j - k, i); break; }
+			}
+			//right
+			for (int k = 1; k < 4; k++) {
+				if (j + k < 10 && enemys.field[i][j + k] != E && enemys.field[i][j + k] != S) {
+					dd[1] &= true;
+					if (enemys.field[i][j + k] == D) exec = 1;
 				}
-				//right
-				for (int k = 1; k < 4; k++) {
-					if (j + k < 10 && enemys.field[i][j + k] != E && enemys.field[i][j + k] != S) {
-						dd[1] &= true;
-						if (enemys.field[i][j + k] == D) exec = 1;
-					}
-					else dd[1] = false;
-					if (j + k < 10 && dd[1] && enemys.field[i][j + k] == D) dir = 1;
+				else dd[1] = false;
+				if (j + k < 10 && dd[1] && enemys.field[i][j + k] == D) dir = 1;
+			}
+			for (int k = 0; k < 4; k++) {
+				if (j + k < 10 && enemys.field[i][j + k] == S) break;
+				if (j + k < 10 && enemys.field[i][j + k] == U) { sh[1] = Point(j + k, i); break; }
+			}
+			//up
+			for (int k = 1; k < 4; k++) {
+				if (i - k >= 0 && enemys.field[i - k][j] != E && enemys.field[i - k][j] != S) {
+					dd[2] &= true;
+					if (enemys.field[i - k][j] == D) exec = 2;
 				}
-				for (int k = 0; k < 4; k++) {
-					if (j + k < 10 && enemys.field[i][j + k] == S) break;
-					if (j + k < 10 && enemys.field[i][j + k] == U) { sh[1] = Point(j + k, i); break; }
+				else dd[2] = false;
+				if (i - k >= 0 && dd[2] && enemys.field[i - k][j] == D) dir = 2;
+			}
+			for (int k = 0; k < 4; k++) {
+				if (i - k >= 0 && enemys.field[i - k][j] == S) break;
+				if (i - k >= 0 && enemys.field[i - k][j] == U) { sh[2] = Point(j, i - k); break; }
+			}
+			//down
+			for (int k = 1; k < 4; k++) {
+				if (i + k < 10 && enemys.field[i + k][j] != E && enemys.field[i + k][j] != S) {
+					dd[3] &= true;
+					if (enemys.field[i + k][j] == D) exec = 3;
 				}
-				//up
-				for (int k = 1; k < 4; k++) {
-					if (i - k >= 0 && enemys.field[i - k][j] != E && enemys.field[i - k][j] != S) {
-						dd[2] &= true;
-						if (enemys.field[i - k][j] == D) exec = 2;
-					}
-					else dd[2] = false;
-					if (i - k >= 0 && dd[2] && enemys.field[i - k][j] == D) dir = 2;
-				}
-				for (int k = 0; k < 4; k++) {
-					if (i - k >= 0 && enemys.field[i - k][j] == S) break;
-					if (i - k >= 0 && enemys.field[i - k][j] == U) { sh[2] = Point(j, i - k); break; }
-				}
-				//down
-				for (int k = 1; k < 4; k++) {
-					if (i + k < 10 && enemys.field[i + k][j] != E && enemys.field[i + k][j] != S) {
-						dd[3] &= true;
-						if (enemys.field[i + k][j] == D) exec = 3;
-					}
-					else dd[3] = false;
-					if (i + k < 10 && dd[3] && enemys.field[i + k][j] == D) dir = 3;
-				}
-				for (int k = 0; k < 4; k++) {
-					if (i + k < 10 && enemys.field[i + k][j] == S) break;
-					if (i + k < 10 && enemys.field[i + k][j] == U) { sh[3] = Point(j, i + k); break; }
-				}
-				if (exec > -1) return sh[exec];
-				else {
+				else dd[3] = false;
+				if (i + k < 10 && dd[3] && enemys.field[i + k][j] == D) dir = 3;
+			}
+			for (int k = 0; k < 4; k++) {
+				if (i + k < 10 && enemys.field[i + k][j] == S) break;
+				if (i + k < 10 && enemys.field[i + k][j] == U) { sh[3] = Point(j, i + k); break; }
+			}
+			if (exec > -1) return sh[exec];
+			else {
+				ran = rand() % 4;
+				while (sh[ran].x == -1) {
 					ran = rand() % 4;
-					while (sh[ran].x == -1) {
-						ran = rand() % 4;
-					}
-					return sh[ran];
 				}
+				return sh[ran];
 			}
 		}
+	}
 	return Point(-1, -1);
 }
