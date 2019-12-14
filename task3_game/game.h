@@ -1,10 +1,16 @@
 #pragma once
+#include "stdafx.h"
 #include "player.h"
 
 class Game {
 private:
 	Player* player1;
 	Player* player2;
+	Field field1;
+	Field field2;
+
+	bool ProcessTurn(const Point &shoot, Field &field);
+
 public:
 	Game() = default;
 	Game(Player* p1, Player* p2) {
