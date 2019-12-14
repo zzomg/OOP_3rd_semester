@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "field.h"
 
 void PrintCell(CellType c) {
@@ -161,9 +162,17 @@ Field Field::Transform() {
 }
 
 void Field::MakeFrame(Point p) {
-	for (int i = p.y-1; i < p.y+2; i++) {
-		for (int j = p.x-1; j < p.x+2; j++) {
+	for (int i = p.y - 1; i < p.y + 2; i++) {
+		for (int j = p.x - 1; j < p.x + 2; j++) {
 			if (j >= 0 && j < 10 && i >= 0 && i < 10 && (field[i][j] == UA || field[i][j] == E)) field[i][j] = AE;
+		}
+	}
+}
+
+void Field::Free() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			field[i][j] = E;
 		}
 	}
 }
