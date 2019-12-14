@@ -1,8 +1,9 @@
+#include "stdafx.h"
 #include "game.h"
 
 bool Game::Start() {
-	player1->GenerateField();
-	player2->GenerateField();
+	player1->GenerateField(field1);
+	player2->GenerateField(field2);
 	Turn();
 	cout << endl << "Play again?" << endl << "Press 'Enter' for answer 'Yes'";
 	if (_getch() == 13) return 1;
@@ -10,8 +11,15 @@ bool Game::Start() {
 }
 
 bool Game::Turn() {
-	while (player2->ProcessTurn(player1->MakeTurn(player2->Transform())));
-	if (player2->GetAlive()) {
+	while (ProcessTurn(player1->MakeTurn(field2.Transform()), field2))
+	{
+		system("cls");
+		field1.Draw();
+		cout << endl;
+		field2.Transform().Draw();
+	}
+		
+	if (field2->GetAlive()) {
 		if (player1->Type() == 0) {
 			system("cls");
 			cout << "Finish turn?";
@@ -50,7 +58,7 @@ GUI::Label::Label(string txt) {
 	text = txt;
 	selected = false;
 	type = 1;
-} 
+}
 
 void GUI::MenuElements::SetActive(bool act) {
 	selected = act;
@@ -198,16 +206,33 @@ void GUI::Menu::Update() {
 			}
 			break;
 		case 3: //controls
-			if (key == 13 && pages[cur_page]->cur_elem == 0) cur_page = 0; 
+			if (key == 13 && pages[cur_page]->cur_elem == 0) cur_page = 0;
 			break;
 		case 4: //about
-			if (key == 13 && pages[cur_page]->cur_elem == 0) cur_page = 0; 
+			if (key == 13 && pages[cur_page]->cur_elem == 0) cur_page = 0;
 			break;
 		case 5:
 			game = Game(p1, p2);
-			if(game.Start()) cur_page = 1;
+			if (game.Start()) cur_page = 1;
 			else exit(0);
 			break;
 		}
 	}
+}
+
+bool Game::ProcessTurn(const Point &shoot, Field &field) {
+	bool res = false;
+	if (field.field[shoot.y][shoot.x] == E) field.field[shoot.y][shoot.x] = S;
+	if (field.field[shoot.y][shoot.x] == AE) field.field[shoot.y][shoot.x] = S;
+	if (field.field[shoot.y][shoot.x] == UA) field.field[shoot.y][shoot.x] = S;
+	if (field.field[shoot.y][shoot.x] == A) {
+		field.field[shoot.y][shoot.x] = D;
+		field.aliveShips()--;
+		if (field.aliveShips() == 0) {
+			return 0;
+		}
+		field.KillCheck(shoot);
+		res = true;
+	}
+	return res;
 }
