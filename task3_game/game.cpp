@@ -1,7 +1,8 @@
-#include "stdafx.h"
 #include "game.h"
 
 bool Game::Start() {
+	field1.Free();
+	field2.Free();
 	player1->GenerateField(field1);
 	player2->GenerateField(field2);
 	Turn();
@@ -15,21 +16,31 @@ bool Game::Turn() {
 	{
 		system("cls");
 		field1.Draw();
+		cout << endl; 
+		system("cls");
+		field2.Draw();
 		cout << endl;
-		field2.Transform().Draw();
 	}
-		
-	if (field2->GetAlive()) {
-		if (player1->Type() == 0) {
+
+	if (field2.getAliveShips()) {
+		if (player1->Type() == PlayerType::Human) {
 			system("cls");
 			cout << "Finish turn?";
 			_getch();
 		}
 		system("cls");
-		while (player1->ProcessTurn(player2->MakeTurn(player1->Transform())));
+		while (ProcessTurn(player2->MakeTurn(field1.Transform()), field1))
+		{
+			system("cls");
+			field2.Draw();
+			cout << endl;
+			system("cls");
+			field1.Draw();
+			cout << endl;
+		}
 	}
-	if (player1->GetAlive() && player2->GetAlive()) {
-		if (player2->Type() == 0) {
+	if (field1.getAliveShips() && field2.getAliveShips()) {
+		if (player2->Type() == PlayerType::Human) {
 			system("cls");
 			cout << "Finish turn?";
 			_getch();
@@ -39,7 +50,7 @@ bool Game::Turn() {
 		return 0;
 	}
 	else {
-		cout << ((player2->GetAlive() > 0) ? "Player #2 won!" : "Player #1 won!");
+		cout << ((field2.getAliveShips() > 0) ? "Player #2 won!" : "Player #1 won!");
 		return 1;
 	}
 }
@@ -80,7 +91,7 @@ void GUI::Label::Render() {
 	cout << text << endl;
 }
 
-GUI::MenuPages::MenuPages(vector<MenuElements*> &dat) {
+GUI::MenuPages::MenuPages(vector<MenuElements*>& dat) {
 	data = dat;
 	int i = 0;
 	for (auto elem : data) {
@@ -109,7 +120,7 @@ void GUI::MenuPages::CheckActive() {
 	}
 }
 
-GUI::Menu::Menu(vector<MenuPages*> &pgs) {
+GUI::Menu::Menu(vector<MenuPages*>& pgs) {
 	pages = pgs;
 }
 
@@ -120,7 +131,7 @@ void GUI::Menu::Start() {
 void GUI::Menu::Update() {
 	char key = 0;
 	Game game;
-	Player *p1 = new Gamer(), *p2 = new Gamer();
+	Player* p1 = new Gamer(), * p2 = new Gamer();
 	while (1) {
 		system("cls");
 		if (cur_page < 5) {
@@ -220,15 +231,15 @@ void GUI::Menu::Update() {
 	}
 }
 
-bool Game::ProcessTurn(const Point &shoot, Field &field) {
+bool Game::ProcessTurn(const Point& shoot, Field& field) {
 	bool res = false;
 	if (field.field[shoot.y][shoot.x] == E) field.field[shoot.y][shoot.x] = S;
 	if (field.field[shoot.y][shoot.x] == AE) field.field[shoot.y][shoot.x] = S;
 	if (field.field[shoot.y][shoot.x] == UA) field.field[shoot.y][shoot.x] = S;
 	if (field.field[shoot.y][shoot.x] == A) {
 		field.field[shoot.y][shoot.x] = D;
-		field.aliveShips()--;
-		if (field.aliveShips() == 0) {
+		field.getAliveShips()--;
+		if (field.getAliveShips() == 0) {
 			return 0;
 		}
 		field.KillCheck(shoot);
