@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include <Windows.h>
 #include <conio.h>
 #include <iostream>
@@ -53,11 +52,11 @@ public:
 	bool KillCheck(Point p);
 	void MakeFrame(Point p);
 
-	int &aliveShips() {
+	int& getAliveShips() {
 		return aliveShips;
 	}
 
-	int aliveShips() const {
+	int getAaliveShips() const {
 		return aliveShips;
 	}
 };
